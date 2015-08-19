@@ -9,9 +9,9 @@ function setup()
 	background(220);
 
 	var entities = [];
-	var count = 20;
+	var count = 25;
 
-	for (i = 0; i < 20; ++i)
+	for (i = 0; i < count; ++i)
 	{
 		entities.push(new Fly());
 	}
@@ -21,7 +21,9 @@ function setup()
 
 function Fly(type)
 {
-	this.pos = createVector(100,100,1);
+	var x = random(0, width);
+	var y = random(0, height);
+	this.pos = createVector(x, y, 1);
 	this.vel = createVector(0,0,0);
 
 	this.stateAscending = false;
@@ -38,14 +40,16 @@ Fly.prototype.update = function()
     if (this.stateMoving) { this.updateMoving(); }
 
     this.pos.add(this.vel);
-    this.pos.z = constrain(this.vel.z, 0.0, 1.0);
+    this.pos.z = constrain(this.pos.z, 0.0, 1.0);
 }
 
 Fly.prototype.draw = function()
 {
 	stroke(1);
 	fill(this.getColor());
-	ellipse(this.pos.x, this.pos.y, 12,12);
+
+	var size = 8.0 + this.pos.z * 8.0;
+	ellipse(this.pos.x, this.pos.y, size, size);
 }
 
 Fly.prototype.getColor = function()
@@ -57,6 +61,26 @@ Fly.prototype.getColor = function()
 
 	return color(0,0,0);
 }
+
+Fly.prototype.getMoveSpeed = function()
+{
+	if (this.isFloor())
+	{
+		return 0.05;
+	}
+
+	return 0.5;
+};
+
+Fly.prototype.isFloor = function()
+{
+	return this.pos.z <= 0.0;
+};
+
+Fly.prototype.isCeiling = function()
+{
+	return this.pos.z >= 1.0;
+};
 
 Fly.prototype.stateNone = function()
 {
@@ -72,12 +96,12 @@ Fly.prototype.startAscending = function()
 {
 	this.stateNone();
 	this.stateAscending = true;
-	this.vel.z = dt * +0.1;
+	this.vel.z = dt * +1.0;
 }
 
 Fly.prototype.updateAscending = function()
 {
-	if (this.pos.z >= 1.0)
+	if (this.isCeiling())
 		this.startWaiting();
 }
 
@@ -85,11 +109,12 @@ Fly.prototype.startDescending = function()
 {
 	this.stateNone();
 	this.stateDescending = true;
+	this.vel.z = dt * -1.0;
 }
 
 Fly.prototype.updateDescending = function()
 {
-	if (this.pos.z <= 0.0)
+	if (this.isFloor())
 		this.startWaiting();
 }
 
@@ -102,15 +127,16 @@ Fly.prototype.startWaiting = function()
 Fly.prototype.updateWaiting = function()
 {
 	if (random(0,1000) < 50) this.startMoving();
-	//if (random(0,1000) < 50) this.startDescending();
-	//if (random(0,1000) < 50) this.startAscending();
+	if (random(0,1000) < 50) this.startDescending();
+	if (random(0,1000) < 50) this.startAscending();
 }
 
 Fly.prototype.startMoving = function()
 {
 	this.stateNone();
 	this.stateMoving = true;
-	this.vel = p5.Vector.random2D().mult(0.5);
+
+	this.vel = p5.Vector.random2D().mult(this.getMoveSpeed());
 }
 
 Fly.prototype.updateMoving = function()
@@ -121,18 +147,9 @@ Fly.prototype.updateMoving = function()
 
 function draw()
 {
-	if (mouseIsPressed)
-	{
-		fill(0);
-		stroke(1);
-	}
-	else
-	{
-		fill(255);
-		stroke(2);
-	}
+	background(128);
 
-	ellipse(mouseX,mouseY,80,80);
+	ellipse(mouseX,mouseY,15,15);
 
 	var u = function(e) { e.update(); };
 	var d = function(e) { e.draw(); };
