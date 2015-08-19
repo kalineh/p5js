@@ -1,0 +1,108 @@
+{
+	"build_systems":
+	[
+		{
+			"cmd":
+			[
+				"msbuild",
+				"/target:Build",
+				"/verbosity:minimal",
+				"/p:Configuration=Release;Platform=Win32",
+				"/m",
+				"${project_path:${folder}}\\premake_out\\FunkEngineSolution.sln"
+			],
+			"file_regex": "^\\s*(.+?)\\(([0-9]+),?([0-9]+)?\\):\\s*(.*) \\[",
+			"name": "FunkEngine.Premake.Win32",
+			"shell": true,
+			"variants":
+			[
+				{
+					"cmd":
+					[
+						"${project_path:${folder}}\\FunkEngineNative.Release.exe",
+						"--windowed",
+						"-w",
+						"1600",
+						"-h",
+						"840"
+					],
+					"encoding": "cp1252",
+					"name": "Run",
+					"shell": true,
+					"working_dir": "${project_path:${folder}}\\..\\..\\..\\..\\resources"
+				},
+				{
+					"cmd":
+					[
+						"${project_path:${folder}}\\premake4.exe",
+						"vs2012"
+					],
+					"name": "PremakeGenerateProject",
+					"shell": true,
+					"working_dir": "${project_path:${folder}}"
+				}
+			],
+			"windows":
+			{
+				"path": "%PATH%;%WINDIR%\\Microsoft.NET\\Framework\\v4.0.30319;%WINDIR%\\Microsoft.NET\\Framework\\v3.5;%WINDIR%\\Microsoft.NET\\Framework\\v2.0.50727"
+			},
+			"working_dir": "${file_path:${folder}}"
+		},
+		{
+			"cmd":
+			[
+				"msbuild",
+				"/target:Build",
+				"/verbosity:minimal",
+				"/p:Configuration=Release;Platform=Win32",
+				"/m",
+				"${project_path:${folder}}\\FunkEngine.sln"
+			],
+			"file_regex": "^\\s*(.+?)\\(([0-9]+),?([0-9]+)?\\):\\s*(.*) \\[",
+			"name": "FunkEngine.Win32",
+			"shell": true,
+			"variants":
+			[
+				{
+					"cmd":
+					[
+						"${project_path:${folder}}\\devenv.bat",
+						"/ProjectConfig Release",
+						"/Runexit",
+						"${project_path:${folder}}\\FunkEngine.sln",
+						"'--windowed'"
+					],
+					"name": "Debug",
+					"shell": true,
+					"working_dir": "${project_path:${folder}}\\..\\..\\..\\..\\resources"
+				},
+				{
+					"cmd":
+					[
+						"${project_path:${folder}}\\Release\\FunkEngine.exe",
+						"--windowed",
+						"-w",
+						"1600",
+						"-h",
+						"840"
+					],
+					"encoding": "cp1252",
+					"name": "Run",
+					"shell": true,
+					"working_dir": "${project_path:${folder}}\\..\\..\\..\\..\\resources"
+				}
+			],
+			"windows":
+			{
+				"path": "%PATH%;%WINDIR%\\Microsoft.NET\\Framework\\v4.0.30319;%WINDIR%\\Microsoft.NET\\Framework\\v3.5;%WINDIR%\\Microsoft.NET\\Framework\\v2.0.50727"
+			},
+			"working_dir": "${file_path:${folder}}"
+		}
+	],
+	"folders":
+	[
+		{
+			"path": "."
+		}
+	]
+}
